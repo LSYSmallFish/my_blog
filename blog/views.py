@@ -12,17 +12,22 @@ class IndexView(View):
     def get(self, request):
         res = dict()
         all_blog = Blog.objects.all().order_by('ctime')
-
+        tags_num=Tag.objects.all().count()
+        categorys_num=Category.objects.all().count()
+        blog_num=all_blog.count()
         # 对博客进行分页
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
             page = 1
-        p = Paginator(all_blog, 1, request=request)
+        p = Paginator(all_blog, 3, request=request)
         blogs = p.page(page)
         for blog in all_blog:
             blog.content = markdown.markdown(blog.content)
         res['all_blog'] = blogs
+        res['tags_num']=tags_num
+        res['category_num']=categorys_num
+        res['blog_num']=blog_num
         return render(request, 'index.html', res)
 
 
